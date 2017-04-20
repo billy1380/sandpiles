@@ -1,0 +1,25 @@
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+/.settings/
+/.gwt/
+/bin/
+/libs/
+/target/
+/war/WEB-INF/classes/
+/war/codegen/
+/gwt-unitCache/
+/war/WEB-INF/lib/
+/war/WEB-INF/deploy/
+/build/
+.project
+.classpath

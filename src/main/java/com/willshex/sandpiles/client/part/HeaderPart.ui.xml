@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:p="urn:import:com.willshex.sandpiles.client.part">
+	<ui:import field="com.willshex.sandpiles.client.helper.PageTypeHelper.*" />
+	<ui:import field="com.willshex.sandpiles.shared.page.PageType.*" />
+	<ui:style gss="true">
+	.bottom {
+		vertical-align: bottom;
+	}
+	
+	.pad-top {
+		padding-top: 20px;
+	}
+	</ui:style>
+
+	<g:HTMLPanel styleName="container {style.pad-top}">
+		<div class="navbar navbar-inverse">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<p:CollapseButton ui:field="btnNavExpand" />
+					<a class="navbar-brand" ui:field="btnHome">
+						<span>
+							<g:Image altText="Sandpiles" title="Sandpiles" ui:field="imgLogo"
+								styleName="img-rounded {style.bottom}" width="20px" height="20px" />
+						</span>
+						<span ui:field="elName" class="text-capitalize">Sandpiles</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

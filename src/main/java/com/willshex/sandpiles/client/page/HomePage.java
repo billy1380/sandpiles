@@ -45,6 +45,7 @@ public class HomePage extends Page implements TaskCompleteEventHandler {
 	protected static final int HEIGHT = 600;
 	protected static final int WIDTH = 600;
 
+	private static boolean CIRCULAR_GRAINS = false;
 	private static int SAND_DIM = 10;
 	private static int TOPPLES_PER_FRAME = 1;
 	private static final int ROW = WIDTH / SAND_DIM;
@@ -98,8 +99,17 @@ public class HomePage extends Page implements TaskCompleteEventHandler {
 		for (int i = 0; i < totalItems; i++) {
 			grains = sand.grains(i);
 			context.setFillStyle(color(grains));
-			context.fillRect(x(i, sand.getItemsPerRow()),
-					y(i, sand.getItemsPerRow()), SAND_DIM, SAND_DIM);
+
+			if (CIRCULAR_GRAINS) {
+				context.beginPath();
+				context.arc(x(i, sand.getItemsPerRow()) + SAND_DIM / 2,
+						y(i, sand.getItemsPerRow()) + SAND_DIM / 2,
+						SAND_DIM / 2, 0, 2 * Math.PI, false);
+				context.fill();
+			} else {
+				context.fillRect(x(i, sand.getItemsPerRow()),
+						y(i, sand.getItemsPerRow()), SAND_DIM, SAND_DIM);
+			}
 		}
 	}
 
@@ -133,6 +143,17 @@ public class HomePage extends Page implements TaskCompleteEventHandler {
 			CssColor.make("#9926FF").toString(),
 			CssColor.make("#5214FF").toString(),
 			CssColor.make("#0000FF").toString() };
+
+	//	private static final String[] COLOURS = { CssColor.make("white").toString(),
+	//			CssColor.make("black").toString(),
+	//			CssColor.make("yellow").toString(),
+	//			CssColor.make("brown").toString() };
+
+	//	private static final String[] COLOURS = {
+	//			CssColor.make("#9B67AD").toString(),
+	//			CssColor.make("#B26ABF").toString(),
+	//			CssColor.make("#C688B0").toString(),
+	//			CssColor.make("#B6A1B6").toString() };
 
 	/**
 	 * @param grains
@@ -246,7 +267,7 @@ public class HomePage extends Page implements TaskCompleteEventHandler {
 		sand = uniform(Sand.builder().shape(Tileable.Square), ROW, ROW * ROW,
 				ce == null
 						|| ((Button) ce.getSource()).getText().equals("clear")
-								? 0 : 4).build();
+								? 0 : 50).build();
 		TOPPLE_TASK.reset();
 		Processor.get().addTask(TOPPLE_TASK);
 		btnPause.setVisible(true);

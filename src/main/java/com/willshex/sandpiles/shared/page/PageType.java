@@ -18,7 +18,8 @@ import com.willshex.utility.StringUtils;
  *
  */
 public enum PageType {
-	HomePageType("home"),;
+	HomePageType("home"),
+	Home2PageType("home2"),;
 
 	private String value;
 	private static Map<String, PageType> valueLookup = null;

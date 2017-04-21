@@ -1,5 +1,5 @@
 //
-//  HomePage.java
+//  HomePage2.java
 //  sandpiles
 //
 //  Created by William Shakour (billy1380) on 19 Apr 2017.
@@ -7,15 +7,20 @@
 //
 package com.willshex.sandpiles.client.page;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -33,29 +38,28 @@ import com.willshex.sandpiles.shared.Tileable;
  * @author William Shakour (billy1380)
  *
  */
-public class HomePage extends Page implements TaskCompleteEventHandler {
+public class HomePage2 extends Page implements TaskCompleteEventHandler {
 
-	private static HomePageUiBinder uiBinder = GWT
-			.create(HomePageUiBinder.class);
+	private static HomePage2UiBinder uiBinder = GWT
+			.create(HomePage2UiBinder.class);
 
-	interface HomePageUiBinder extends UiBinder<Widget, HomePage> {}
+	interface HomePage2UiBinder extends UiBinder<Widget, HomePage2> {}
 
 	protected static final String UPGRADE_MESSAGE = "<strong>Error!</strong> Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this applications.";
 	// canvas size, in px
 	protected static final int HEIGHT = 600;
 	protected static final int WIDTH = 600;
 
-	private static boolean CIRCULAR_GRAINS = false;
 	private static int SAND_DIM = 10;
 	private static int TOPPLES_PER_FRAME = 1;
 	private static final int ROW = WIDTH / SAND_DIM;
 
-	@UiField(provided = true) Canvas elCanvas = Canvas.createIfSupported();
+	@UiField Element elCanvas;
 	@UiField HTMLPanel pnlError;
 	@UiField Button btnPause;
 
 	private Sand sand;
-	private Context2d context;
+
 	private Task TOPPLE_TASK = new Task() {
 
 		int count = 1;
@@ -86,7 +90,7 @@ public class HomePage extends Page implements TaskCompleteEventHandler {
 		}
 	};
 
-	public HomePage () {
+	public HomePage2 () {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		setupCanvas();
@@ -98,39 +102,8 @@ public class HomePage extends Page implements TaskCompleteEventHandler {
 		int grains;
 		for (int i = 0; i < totalItems; i++) {
 			grains = sand.grains(i);
-			context.setFillStyle(color(grains));
-
-			if (CIRCULAR_GRAINS) {
-				context.beginPath();
-				context.arc(x(i, sand.getItemsPerRow()) + SAND_DIM / 2,
-						y(i, sand.getItemsPerRow()) + SAND_DIM / 2,
-						SAND_DIM / 2, 0, 2 * Math.PI, false);
-				context.fill();
-			} else {
-				context.fillRect(x(i, sand.getItemsPerRow()),
-						y(i, sand.getItemsPerRow()), SAND_DIM, SAND_DIM);
-			}
+			cells[i].getStyle().setBackgroundColor(color(grains));
 		}
-	}
-
-	/**
-	 * @param i
-	 * @param itemsPerRow 
-	 * @return
-	 */
-	private double y (int i, int itemsPerRow) {
-		int row = i / itemsPerRow;
-		return row * SAND_DIM;
-	}
-
-	/**
-	 * @param i
-	 * @param itemsPerRow 
-	 * @return
-	 */
-	private double x (int i, int itemsPerRow) {
-		int column = i % itemsPerRow;
-		return column * SAND_DIM;
 	}
 
 	//	private static final String[] COLOURS = { CssColor.make("red").toString(),
@@ -143,6 +116,7 @@ public class HomePage extends Page implements TaskCompleteEventHandler {
 			CssColor.make("#9926FF").toString(),
 			CssColor.make("#5214FF").toString(),
 			CssColor.make("#0000FF").toString() };
+	private Element[] cells;
 
 	//	private static final String[] COLOURS = { CssColor.make("white").toString(),
 	//			CssColor.make("black").toString(),
@@ -224,31 +198,52 @@ public class HomePage extends Page implements TaskCompleteEventHandler {
 			return;
 		}
 
-		elCanvas.setWidth(WIDTH + "px");
-		elCanvas.setHeight(HEIGHT + "px");
+		elCanvas.getStyle().setWidth(WIDTH, Unit.PX);
+		elCanvas.getStyle().setHeight(HEIGHT, Unit.PX);
 
-		elCanvas.setCoordinateSpaceWidth(WIDTH);
-		elCanvas.setCoordinateSpaceHeight(HEIGHT);
-
-		context = elCanvas.getContext2d();
-
-		elCanvas.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick (ClickEvent event) {
-				int at = (event.getRelativeX(elCanvas.getElement()) / SAND_DIM)
-						+ (event.getRelativeY(elCanvas.getElement()) / SAND_DIM
-								* sand.getItemsPerRow());
-
-				sand.add(1000, at);
-
-				TOPPLE_TASK.reset();
-				Processor.get().addTask(TOPPLE_TASK);
-				btnPause.setVisible(true);
-				btnPause.setText("pause");
-			}
-		});
+		cells = new Element[(WIDTH / SAND_DIM) * (HEIGHT / SAND_DIM)];
+		Style s;
+		Element e;
+		for (int i = 0; i < cells.length; i++) {
+			cells[i] = e = Document.get().createDivElement();
+			s = e.getStyle();
+			elCanvas.appendChild(e);
+			//			s.setPosition(Position.RELATIVE);
+			//			s.setTop(y(i, ROW), Unit.PX);
+			//			s.setLeft(x(i, ROW), Unit.PX);
+			s.setWidth(SAND_DIM, Unit.PX);
+			s.setHeight(SAND_DIM, Unit.PX);
+			s.setFloat(Float.LEFT);
+			s.setDisplay(Display.INLINE_BLOCK);
+			final int at = i;
+			Event.sinkEvents(e, Event.ONCLICK);
+			Event.setEventListener(e, new EventListener() {
+				@Override
+				public void onBrowserEvent (Event event) {
+					if (Event.ONCLICK == event.getTypeInt()) {
+						sand.add(1000, at);
+						Processor.get().removeTask(TOPPLE_TASK);
+						TOPPLE_TASK.reset();
+						Processor.get().addTask(TOPPLE_TASK);
+						btnPause.setVisible(true);
+						btnPause.setText("pause");
+					}
+				}
+			});
+		}
 	}
+
+	// click
+	//	int at = (event.getRelativeX(elCanvas.getElement()) / SAND_DIM)
+	//			+ (event.getRelativeY(elCanvas.getElement()) / SAND_DIM
+	//					* sand.getItemsPerRow());
+	//
+	//	sand.add(1000, at);
+	//
+	//	TOPPLE_TASK.reset();
+	//	Processor.get().addTask(TOPPLE_TASK);
+	//	btnPause.setVisible(true);
+	//	btnPause.setText("pause");
 
 	@UiHandler("btnRandom")
 	void randomClicked (ClickEvent ce) {

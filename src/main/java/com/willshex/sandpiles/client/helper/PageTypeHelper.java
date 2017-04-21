@@ -13,6 +13,7 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.user.client.History;
 import com.willshex.sandpiles.client.page.HomePage;
+import com.willshex.sandpiles.client.page.HomePage2;
 import com.willshex.sandpiles.client.page.Page;
 import com.willshex.sandpiles.shared.page.PageType;
 
@@ -34,6 +35,9 @@ public class PageTypeHelper {
 		Page page = null;
 
 		switch (pageType) {
+		case Home2PageType:
+			page = new HomePage2();
+			break;
 		case HomePageType:
 		default:
 			if (defaultPage == null) {

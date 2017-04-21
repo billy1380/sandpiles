@@ -1,0 +1,30 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:c="urn:import:com.google.gwt.canvas.client">
+	<ui:style>
+	.margin {
+		margin-bottom: 10px;
+	}
+	
+	.accelerate {
+		transform: translate3d(0, 0, 0);
+		display: inline-block;
+	}
+	</ui:style>
+	<g:HTMLPanel styleName="container text-center">
+		<div class="btn-toolbar {style.margin}">
+			<div class="btn-group">
+				<g:Button ui:field="btnRandom" styleName="btn btn-default">random</g:Button>
+				<g:Button ui:field="btnUniform" styleName="btn btn-default">uniform</g:Button>
+				<g:Button ui:field="btnClear" styleName="btn btn-default">clear</g:Button>
+			</div>
+			<g:Button ui:field="btnPause" styleName="btn btn-default">pause</g:Button>
+		</div>
+
+		<g:HTMLPanel ui:field="pnlError" styleName="alert alert-danger"
+			visible="false" />
+
+		<div ui:field="elCanvas" class="{style.accelerate}"/>
+
+	</g:HTMLPanel>
+</ui:UiBinder> 
